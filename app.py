@@ -4,6 +4,12 @@ import tornado.websocket
 import tornado.template
 import tornado.escape
 import tornado.httpserver
+import os
+
+ip = os.environ["OPENSHIFT_PYTHON_IP"]
+port = int(os.environ["OPENSHIFT_PYTHON_PORT"])
+hostname = os.environ["OPENSHIFT_APP_DNS"]
+websocket_port = 8000
 
 web_socket_connections = []
 log_max_last_messages = 20
@@ -12,7 +18,9 @@ last_messages = []
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
         loader = tornado.template.Loader(".")
-        self.write(loader.load("index.html").generate(last_messages=last_messages))
+        self.write(loader.load("index.html").generate(last_messages=last_messages,
+                                                      hostname=hostname,
+                                                      websocket_port=websocket_port))
 
 class ChatWebSocketHandler(tornado.websocket.WebSocketHandler):
     def open(self):
@@ -28,6 +36,9 @@ class ChatWebSocketHandler(tornado.websocket.WebSocketHandler):
     def on_close(self):
         web_socket_connections.remove(self)
 
+    def check_origin(self, origin):
+        return True
+
 application = tornado.web.Application([
     (r"/", MainHandler),
     (r"/websocket", ChatWebSocketHandler),
@@ -36,5 +47,6 @@ application = tornado.web.Application([
 
 if __name__ == "__main__":
     server = tornado.httpserver.HTTPServer(application)
-    server.listen(8000)
+    print "Port is " + str(port) + ", ip is " + ip
+    server.listen(port, ip)
     tornado.ioloop.IOLoop.current().start()

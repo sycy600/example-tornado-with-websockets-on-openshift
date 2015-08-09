@@ -16,7 +16,7 @@
     <script src="/static/jquery-2.1.4.min.js"></script>
     <script>
        $(document).ready(function() {
-          var web_socket = new WebSocket("ws://localhost:8000/websocket");
+          var web_socket = new WebSocket("ws://{{hostname}}:{{websocket_port}}/websocket");
           web_socket.onmessage = function(web_socket_event) {
             $("#chat_window").append("<p>" + web_socket_event.data + "</p>");
           };
