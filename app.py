@@ -47,6 +47,5 @@ application = tornado.web.Application([
 
 if __name__ == "__main__":
     server = tornado.httpserver.HTTPServer(application)
-    print "Port is " + str(port) + ", ip is " + ip
     server.listen(port, ip)
     tornado.ioloop.IOLoop.current().start()
