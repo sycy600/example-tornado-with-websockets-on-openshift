@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>The chat</title>
+  </head>
+  <body>
+    <div id="chat_window">
+      {% for last_message in last_messages %}
+        <p>{{ escape(last_message) }}</p>
+      {% end %}
+    </div>
+    <form>
+      <input type="text" id="chat_input">
+      <input type="button" id="chat_send_message" value="send">
+    </form>
+    <script src="/static/jquery-2.1.4.min.js"></script>
+    <script>
+       $(document).ready(function() {
+          var web_socket = new WebSocket("ws://localhost:8000/websocket");
+          web_socket.onmessage = function(web_socket_event) {
+            $("#chat_window").append("<p>" + web_socket_event.data + "</p>");
+          };
+          $("#chat_send_message").click(function() {
+             var message = $("#chat_input").val();
+             web_socket.send(message);
+             $("#chat_input").val("");
+          });
+       });
+    </script>
+  </body>
+</html>
