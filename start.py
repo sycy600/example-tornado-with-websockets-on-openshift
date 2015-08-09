@@ -3,6 +3,7 @@ import tornado.web
 import tornado.websocket
 import tornado.template
 import tornado.escape
+import tornado.httpserver
 
 web_socket_connections = []
 log_max_last_messages = 20
@@ -34,5 +35,6 @@ application = tornado.web.Application([
 ])
 
 if __name__ == "__main__":
-    application.listen(8000)
+    server = tornado.httpserver.HTTPServer(application)
+    server.listen(8000)
     tornado.ioloop.IOLoop.current().start()
